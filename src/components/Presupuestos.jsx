@@ -16,10 +16,10 @@ export default function Presupuestos({
     const reconocimientoRef = useRef(null);
 
     const datosAutonomo = {
-        nombre: "Construcciones y Reformas Manuel",
+        nombre: "",
         nif: "12345678-X",
-        telefono: "600 000 000",
-        email: "manuel.obras@email.com"
+        telefono: "633 89 04 53",
+        email: ""
     };
 
     // Inicialización del dictado por voz
@@ -70,7 +70,7 @@ export default function Presupuestos({
         setCargando(true);
 
         try {
-            const respuesta = await fetch('/api/openai', {
+            const respuesta = await fetch('/api/generar-presupuesto', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

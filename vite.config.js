@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { GoogleGenAI, Type } from '@google/genai';
 
@@ -18,7 +18,7 @@ function readRequestBody(req) {
   });
 }
 
-function createGenerarPresupuestoMiddleware() {
+function createGenerarPresupuestoMiddleware(apiKey) {
   return async (req, res, next) => {
     if (req.method !== 'POST' || req.url !== '/api/generar-presupuesto') {
       next();
@@ -36,12 +36,10 @@ function createGenerarPresupuestoMiddleware() {
         return;
       }
 
-      const apiKey = globalThis.process?.env?.GEMINI_API_KEY || '';
-
       if (!apiKey) {
         res.statusCode = 500;
         res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify({ error: 'Falta la clave GEMINI_API_KEY en tu archivo .env' }));
+        res.end(JSON.stringify({ error: 'Falta la clave GEMINI_API_KEY en tu archivo .env.local' }));
         return;
       }
 
@@ -95,19 +93,25 @@ function createGenerarPresupuestoMiddleware() {
   };
 }
 
-const apiMiddleware = createGenerarPresupuestoMiddleware();
+export default defineConfig(({ mode }) => {
+  // loadEnv lee automáticamente .env, .env.local, .env.[mode], etc.
+  const env = loadEnv(mode, process.cwd(), '');
+  const apiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
 
-export default defineConfig({
-  plugins: [
-    react(),
-    {
-      name: 'local-api-generar-presupuesto',
-      configureServer(server) {
-        server.middlewares.use(apiMiddleware);
+  const apiMiddleware = createGenerarPresupuestoMiddleware(apiKey);
+
+  return {
+    plugins: [
+      react(),
+      {
+        name: 'local-api-generar-presupuesto',
+        configureServer(server) {
+          server.middlewares.use(apiMiddleware);
+        },
+        configurePreviewServer(server) {
+          server.middlewares.use(apiMiddleware);
+        },
       },
-      configurePreviewServer(server) {
-        server.middlewares.use(apiMiddleware);
-      },
-    },
-  ],
+    ],
+  };
 });
