@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { jsPDF } from 'jspdf';
+import { datosAutonomo } from '../data/datosAutonomo';
 
 export default function Presupuestos({
     conceptos = [],
@@ -15,12 +16,6 @@ export default function Presupuestos({
 
     const reconocimientoRef = useRef(null);
 
-    const datosAutonomo = {
-        nombre: "",
-        nif: "12345678-X",
-        telefono: "633 89 04 53",
-        email: ""
-    };
 
     // Inicialización del dictado por voz
     useEffect(() => {

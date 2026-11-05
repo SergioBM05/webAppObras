@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Presupuestos from './components/Presupuestos';
 import Tickets from './components/Tickets';
+import Diagnostico from './components/Diagnostico';
 
 function App() {
   const [pestanaActiva, setPestanaActiva] = useState('presupuestos');
@@ -36,6 +37,8 @@ function App() {
             subtotal={subtotal}
             totalConIva={totalConIva}
           />
+        ) : pestanaActiva === 'diagnostico' ? (
+          <Diagnostico />
         ) : (
           <Tickets darkMode={darkMode} />
         )}
@@ -59,6 +62,19 @@ function App() {
         >
           <span className="text-xl mb-0.5">🧮</span>
           <span className="text-[10px] font-bold tracking-wider uppercase">Calculadora</span>
+        </button>
+
+        {/* Botón de Diagnóstico Empresarial */}
+        <button
+          onClick={() => setPestanaActiva('diagnostico')}
+          className={`flex flex-col items-center justify-center w-24 h-full transition-all duration-200 ${
+            pestanaActiva === 'diagnostico'
+              ? 'text-blue-500 font-black scale-105'
+              : darkMode ? 'text-slate-500 hover:text-slate-400' : 'text-slate-400 hover:text-slate-600'
+          }`}
+        >
+          <span className="text-xl mb-0.5">🩺</span>
+          <span className="text-[10px] font-bold tracking-wider uppercase">Diagnóstico</span>
         </button>
 
         {/* Botón de Tickets */}
